@@ -554,7 +554,7 @@ static NSString *const fontPayloadTemplate =
 	[self updateNavigation];
 	
 	if (invalidFonts.count != 0) {
-		NSString *message = [NSString stringWithFormat:@"The following fonts could be read and imported: %@", [invalidFonts componentsJoinedByString:@", "]];
+		NSString *message = [NSString stringWithFormat:@"The following fonts couldn't be read or imported: %@", [invalidFonts componentsJoinedByString:@", "]];
 		UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Import Error" message:message preferredStyle:UIAlertControllerStyleAlert];
 		alertController.view.tintColor = self.view.tintColor;
 		[alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
