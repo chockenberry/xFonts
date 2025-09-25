@@ -233,6 +233,19 @@
 					}
 					
 					if (validFont) {
+						CGDataProviderRef fontDataProviderRef = CGDataProviderCreateWithURL((CFURLRef)URL);
+						CGFontRef fontRef = CGFontCreateWithDataProvider(fontDataProviderRef);
+						if (fontRef != NULL) {
+							CGFontRelease(fontRef);
+						}
+						else {
+							DebugLog(@"%s can't load font at %@", __PRETTY_FUNCTION__, URL.absoluteString);
+							[NSFileManager.defaultManager removeItemAtURL:URL error:nil];
+							validFont = NO;
+						}
+					}
+					
+					if (validFont) {
 						FontInfo *importFontInfo = [[FontInfo alloc] initWithFileURL:URL];
 						
 						BOOL importable = YES;
@@ -293,6 +306,19 @@
 			}
 			else if ([fileExtension.lowercaseString isEqual:@"ttf"]) {
 				validFont = YES;
+			}
+
+			if (validFont) {
+				CGDataProviderRef fontDataProviderRef = CGDataProviderCreateWithURL((CFURLRef)URL);
+				CGFontRef fontRef = CGFontCreateWithDataProvider(fontDataProviderRef);
+				if (fontRef != NULL) {
+					CGFontRelease(fontRef);
+				}
+				else {
+					DebugLog(@"%s can't load font at %@", __PRETTY_FUNCTION__, URL.absoluteString);
+					[NSFileManager.defaultManager removeItemAtURL:URL error:nil];
+					validFont = NO;
+				}
 			}
 			
 			if (validFont) {
@@ -484,6 +510,8 @@ static NSString *const fontPayloadTemplate =
 	DebugLog(@"%s urls = %@", __PRETTY_FUNCTION__, URLs);
 	// NOTE: This is called after the selected files are downloaded and the picker view is dismissed.
 	
+	NSMutableArray<NSString *> *invalidFonts = [NSMutableArray array];
+	
 	for (NSURL *sourceURL in URLs) {
 		BOOL accessingResource = [sourceURL startAccessingSecurityScopedResource];
 		NSString *fileName = sourceURL.lastPathComponent;
@@ -491,8 +519,30 @@ static NSString *const fontPayloadTemplate =
 		NSFileManager *fileManager = NSFileManager.defaultManager;
 		NSError *error;
 		if (! [fileManager fileExistsAtPath:destinationURL.path]) {
-			if (! [fileManager copyItemAtURL:sourceURL toURL:destinationURL error:&error]) {
-				ReleaseLog(@"%s error = %@", __PRETTY_FUNCTION__, error);
+			BOOL validFont = NO;
+			
+			CGDataProviderRef fontDataProviderRef = CGDataProviderCreateWithURL((CFURLRef)sourceURL);
+			CGFontRef fontRef = CGFontCreateWithDataProvider(fontDataProviderRef);
+			if (fontRef != NULL) {
+				CFStringRef postScriptNameStringRef = CGFontCopyPostScriptName(fontRef);
+				CGFontRef existingFontRef = CGFontCreateWithFontName(postScriptNameStringRef);
+				if (existingFontRef != NULL) {
+					CGFontRelease(existingFontRef);
+				}
+				else {
+					validFont = YES;
+				}
+				CGFontRelease(fontRef);
+			}
+			else {
+				DebugLog(@"%s can't load font at %@", __PRETTY_FUNCTION__, sourceURL.absoluteString);
+				[invalidFonts addObject:sourceURL.lastPathComponent];
+			}
+
+			if (validFont) {
+				if (! [fileManager copyItemAtURL:sourceURL toURL:destinationURL error:&error]) {
+					ReleaseLog(@"%s error = %@", __PRETTY_FUNCTION__, error);
+				}
 			}
 		}
 		if (accessingResource) {
@@ -502,6 +552,15 @@ static NSString *const fontPayloadTemplate =
 	
 	[self loadFonts];
 	[self updateNavigation];
+	
+	if (invalidFonts.count != 0) {
+		NSString *message = [NSString stringWithFormat:@"The following fonts could be read and imported: %@", [invalidFonts componentsJoinedByString:@", "]];
+		UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Import Error" message:message preferredStyle:UIAlertControllerStyleAlert];
+		alertController.view.tintColor = self.view.tintColor;
+		[alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+		
+		[self presentViewController:alertController animated:YES completion:nil];
+	}
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
