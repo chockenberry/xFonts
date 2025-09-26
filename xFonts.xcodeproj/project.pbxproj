@@ -109,6 +109,7 @@
 		44D14CCF24843C89007E8BD9 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
 		44DDE6322457D40100AD7F8F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "xFonts/Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
 		44DDE6342458CFB200AD7F8F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		44E3DD482E87464000CF9A7F /* xFonts.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = xFonts.entitlements; sourceTree = "<group>"; };
 		44F6282B244B7EE300C8BBD7 /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
 		44F6282C244B7EE300C8BBD7 /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		9309F2FA1E4917B1002F2AB7 /* DDData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDData.h; sourceTree = "<group>"; };
@@ -415,6 +416,7 @@
 		93AE4C6A1E42C44B00D19E41 /* xFonts */ = {
 			isa = PBXGroup;
 			children = (
+				44E3DD482E87464000CF9A7F /* xFonts.entitlements */,
 				9309F2F61E4917B1002F2AB7 /* RoutingHTTPServer */,
 				443576DB2450AF5800669EEB /* MarkdownAttributedString */,
 				93AE4C6E1E42C44B00D19E41 /* AppDelegate.h */,
@@ -778,6 +780,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = xFonts/xFonts.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -797,6 +800,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = xFonts/xFonts.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
